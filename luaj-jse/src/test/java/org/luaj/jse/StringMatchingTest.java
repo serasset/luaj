@@ -44,4 +44,23 @@ class StringMatchingTest {
 		assertEquals(xby, axbya.substring(1, 5).invokemethod("match", args));
 		assertEquals(nil, axbya.substring(2, 5).invokemethod("match", args));
 	}
+
+	@Test
+	public void testMatchFrontierPatterns() {
+		LuaValue[] args = { LuaString.valueOf("%f[%a]b"), LuaString.valueOf("x")  };
+
+		LuaString a = LuaString.valueOf("a");
+		LuaString ab = LuaString.valueOf("ab");
+		LuaString ba = LuaString.valueOf("ba");
+		LuaString xa = LuaString.valueOf("xa");
+		LuaString bb = LuaString.valueOf("bb");
+		LuaString xb = LuaString.valueOf("xb");
+
+		LuaValue nil = LuaValue.NIL;
+
+		assertEquals(a, a.invokemethod("gsub", args).arg1());
+		assertEquals(ab, ab.invokemethod("gsub", args).arg1());
+		assertEquals(xa, ba.invokemethod("gsub", args).arg1());
+		assertEquals(xb, bb.invokemethod("gsub", args).arg1());
+	}
 }
