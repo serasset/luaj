@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.luaj</groupId>
 		<artifactId>luaj-parent</artifactId>
-		<version>3.0.2-GS</version>
+		<version>3.0.3-GS-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>luaj-test</artifactId>
