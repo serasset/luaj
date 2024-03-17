@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.nio.charset.StandardCharsets;
 import org.luaj.vm2.lib.MathLib;
 
 /**
@@ -122,9 +123,7 @@ public class LuaString extends LuaValue {
 	 *         String
 	 */
 	public static LuaString valueOf(String string) {
-		char[] c = string.toCharArray();
-		byte[] b = new byte[lengthAsUtf8(c)];
-		encodeToUtf8(c, c.length, b, 0);
+		byte[] b = string.getBytes(StandardCharsets.UTF_8);
 		return valueUsing(b, 0, b.length);
 	}
 
@@ -850,7 +849,8 @@ public class LuaString extends LuaValue {
 	}
 
 	/**
-	 * Convert to Java String interpreting as utf8 characters.
+	 * Convert to Java String interpreting as utf8 characters. This version allows supplementary
+	 * characters in the string, and generate valid java representation with surrogate characters.
 	 *
 	 * @param bytes  byte array in UTF8 encoding to convert
 	 * @param offset starting index in byte array
@@ -862,6 +862,10 @@ public class LuaString extends LuaValue {
 	 * @see #isValidUtf8()
 	 */
 	public static String decodeAsUtf8(byte[] bytes, int offset, int length) {
+		return new String(bytes, offset, length, StandardCharsets.UTF_8);
+	}
+
+	public static String decodeAsUtf8Old(byte[] bytes, int offset, int length) {
 		int i, j, n, b;
 		for (i = offset, j = offset+length, n = 0; i < j; ++n) {
 			switch (0xE0 & bytes[i++]) {
@@ -881,6 +885,7 @@ public class LuaString extends LuaValue {
 	}
 
 	/**
+	 * Deprecated version of decodeAsUtf8 that does not handle surrogate pairs.
 	 * Count the number of bytes required to encode the string as UTF-8.
 	 *
 	 * @param chars Array of unicode characters to be encoded as UTF-8
@@ -889,6 +894,7 @@ public class LuaString extends LuaValue {
 	 * @see #decodeAsUtf8(byte[], int, int)
 	 * @see #isValidUtf8()
 	 */
+	@Deprecated
 	public static int lengthAsUtf8(char[] chars) {
 		int i, b;
 		char c;
@@ -923,6 +929,12 @@ public class LuaString extends LuaValue {
 			} else if (c < 0x800) {
 				bytes[j++] = (byte) (0xC0 | c>>6 & 0x1f);
 				bytes[j++] = (byte) (0x80 | c & 0x3f);
+			} else if (c >= 0xD800 && c < 0xDC00 && i+1 < nchars) {
+				int code = 0x10000 + ((c & 0x3FF)<<10 | chars[++i] & 0x3FF);
+				bytes[j++] = (byte) (0xF0 | code>>18 & 0x07);
+				bytes[j++] = (byte) (0x80 | code>>12 & 0x3f);
+				bytes[j++] = (byte) (0x80 | code>>6 & 0x3f);
+				bytes[j++] = (byte) (0x80 | code & 0x3f);
 			} else {
 				bytes[j++] = (byte) (0xE0 | c>>12 & 0x0f);
 				bytes[j++] = (byte) (0x80 | c>>6 & 0x3f);
@@ -946,6 +958,8 @@ public class LuaString extends LuaValue {
 			if (c >= 0 || (c & 0xE0) == 0xC0 && i < j && (m_bytes[i++] & 0xC0) == 0x80)
 				continue;
 			if ((c & 0xF0) == 0xE0 && i+1 < j && (m_bytes[i++] & 0xC0) == 0x80 && (m_bytes[i++] & 0xC0) == 0x80)
+				continue;
+			if ((c & 0xF8) == 0xF0 && i+2 < j && (m_bytes[i++] & 0xC0) == 0x80 && (m_bytes[i++] & 0xC0) == 0x80 && (m_bytes[i++] & 0xC0) == 0x80)
 				continue;
 			return false;
 		}

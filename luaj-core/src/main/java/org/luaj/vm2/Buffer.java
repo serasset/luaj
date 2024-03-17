@@ -21,6 +21,8 @@
  ******************************************************************************/
 package org.luaj.vm2;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * String buffer for use in string library methods, optimized for production of
  * StrValue instances.
@@ -179,10 +181,11 @@ public final class Buffer {
 	 * @see LuaString#encodeToUtf8(char[], int, byte[], int)
 	 */
 	public Buffer append(String str) {
-		char[] c = str.toCharArray();
-		final int n = LuaString.lengthAsUtf8(c);
+		byte[] u8 = str.getBytes(StandardCharsets.UTF_8);
+		final int n = u8.length;
 		makeroom(0, n);
-		LuaString.encodeToUtf8(c, c.length, bytes, offset+length);
+		System.arraycopy(u8, 0, bytes, offset+length, n);
+		// LuaString.encodeToUtf8(c, c.length, bytes, offset+length);
 		length += n;
 		return this;
 	}
