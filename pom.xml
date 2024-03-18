@@ -5,7 +5,7 @@
 
   <groupId>org.luaj</groupId>
   <artifactId>luaj-parent</artifactId>
-  <version>3.0.2-GS</version>
+  <version>3.0.4-GS</version>
 
   <packaging>pom</packaging>
 

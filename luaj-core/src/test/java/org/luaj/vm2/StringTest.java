@@ -79,9 +79,24 @@ class StringTest {
 
 	@Test
 	void testUtf8() {
-		for (int i = 4; i < 0xffff; i += 4) {
+		// Two successive Surrogate pairs can only be high, then low
+		for (int i = 4; i < 0xD800; i += 4) {
 			char[] c = { (char) (i+0), (char) (i+1), (char) (i+2), (char) (i+3) };
 			String before = new String(c) + " " + i + "-" + (i+4);
+			LuaString ls = LuaString.valueOf(before);
+			String after = ls.tojstring();
+			assertEquals(userFriendly(before), userFriendly(after));
+		}
+		for (int i = 0xE000; i < 0xffff; i += 4) {
+			char[] c = { (char) (i+0), (char) (i+1), (char) (i+2), (char) (i+3) };
+			String before = new String(c) + " " + i + "-" + (i+4);
+			LuaString ls = LuaString.valueOf(before);
+			String after = ls.tojstring();
+			assertEquals(userFriendly(before), userFriendly(after));
+		}
+		for (int i = 0xD800; i < 0xDB7F; i += 4) {
+			char[] c = { (char) (i+0), (char) (i+0x400), (char) (i+1), (char) (i+0x401) };
+			String before = new String(c) + " " + i + "-" + (i+2);
 			LuaString ls = LuaString.valueOf(before);
 			String after = ls.tojstring();
 			assertEquals(userFriendly(before), userFriendly(after));

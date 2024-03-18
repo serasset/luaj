@@ -918,6 +918,11 @@ public class StringLib extends TwoArgFunction {
 			this.matchdepth = MAXCCALLS;
 		}
 
+		private boolean isPatternMagicChar(byte b) {
+			return b == '^' || b == '$'  || b == '(' || b == ')'  || b == '%'  || b == '.'  || b == '['
+					|| b == ']'  || b == '*'  || b == '+'  || b == '-'  || b == '?';
+		}
+
 		private void add_s(Buffer lbuf, LuaString news, int soff, int e) {
 			int l = news.length();
 			for (int i = 0; i < l; ++i) {
@@ -928,7 +933,9 @@ public class StringLib extends TwoArgFunction {
 					++i; // skip ESC
 					b = (byte) (i < l? news.luaByte(i): 0);
 					if (!Character.isDigit((char) b)) {
-						if (b != L_ESC)
+						// GS: soften the strict > 5.2 pattern semantic and accept escaped chars in
+						// substitutions so that the programs in MediaMiki are executable.
+						if (!isPatternMagicChar(b))
 							error("invalid use of '" + (char) L_ESC + "' in replacement string: after '" + (char) L_ESC
 								+ "' must be '0'-'9' or '" + (char) L_ESC + "', but found "
 								+ (i < l? "symbol '" + (char) b + "' with code " + b + " at pos " + (i+1)
