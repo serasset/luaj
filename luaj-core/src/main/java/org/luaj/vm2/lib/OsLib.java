@@ -163,8 +163,11 @@ public class OsLib extends TwoArgFunction {
 				case DATE: {
 					String s = args.optjstring(1, "%c");
 					long t = args.isnumber(2)? args.tolong(2): time(null);
-					if (s.equals("*t")) {
+					if (s.equals("*t") || s.equals("!*t")) {
 						Calendar d = Calendar.getInstance();
+						if (s.startsWith("!")) {
+							t -= timeZoneOffset(d);
+						}
 						d.setTime(new Date(t*1000));
 						LuaTable tbl = LuaValue.tableOf();
 						tbl.set("year", LuaValue.valueOf(d.get(Calendar.YEAR)));
