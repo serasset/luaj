@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2009 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -927,7 +927,7 @@ public class LuaTable extends LuaValue implements Metatable {
 	 * @return array of keys in the table
 	 */
 	public LuaValue[] keys() {
-		Vector l = new Vector();
+		Vector<LuaValue> l = new Vector<>();
 		LuaValue k = LuaValue.NIL;
 		while ( true ) {
 			Varargs n = next(k);
@@ -999,7 +999,7 @@ public class LuaTable extends LuaValue implements Metatable {
 	/**
 	 * Represents a slot in the hash table.
 	 */
-	interface Slot {
+	protected interface Slot {
 
 		/** Return hash{pow2,mod}( first().key().hashCode(), sizeMask ) */
 		int keyindex(int hashMask);
@@ -1406,12 +1406,12 @@ public class LuaTable extends LuaValue implements Metatable {
 		private Slot         next;
 
 		private DeadSlot(LuaValue key, Slot next) {
-			this.key = isLargeKey(key)? new WeakReference(key): (Object) key;
+			this.key = isLargeKey(key)? new WeakReference<>(key): (Object) key;
 			this.next = next;
 		}
 
 		private LuaValue key() {
-			return (LuaValue) (key instanceof WeakReference? ((WeakReference) key).get(): key);
+			return (LuaValue) (key instanceof WeakReference ? ((WeakReference<?>) key).get(): key);
 		}
 
 		@Override
@@ -1481,17 +1481,17 @@ public class LuaTable extends LuaValue implements Metatable {
 
 		@Override
 		public String toString() {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append("<dead");
 			LuaValue k = key();
 			if (k != null) {
 				buf.append(": ");
-				buf.append(k.toString());
+				buf.append(k);
 			}
 			buf.append('>');
 			if (next != null) {
 				buf.append("; ");
-				buf.append(next.toString());
+				buf.append(next);
 			}
 			return buf.toString();
 		}
