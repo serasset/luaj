@@ -195,10 +195,10 @@ public class BasicBlock {
 
 	public static BasicBlock[] findLiveBlocks(BasicBlock[] blocks) {
 		// add reachable blocks
-		Vector next = new Vector();
+		Vector<BasicBlock> next = new Vector<>();
 		next.addElement(blocks[0]);
 		while ( !next.isEmpty() ) {
-			BasicBlock b = (BasicBlock) next.elementAt(0);
+			BasicBlock b = next.elementAt(0);
 			next.removeElementAt(0);
 			if (!b.islive) {
 				b.islive = true;
@@ -209,7 +209,7 @@ public class BasicBlock {
 		}
 
 		// create list in natural order
-		Vector list = new Vector();
+		Vector<BasicBlock> list = new Vector<>();
 		for (int i = 0; i < blocks.length; i = blocks[i].pc1+1)
 			if (blocks[i].islive)
 				list.addElement(blocks[i]);

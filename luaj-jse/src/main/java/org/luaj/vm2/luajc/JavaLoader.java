@@ -1,13 +1,4 @@
-package org.luaj.vm2.luajc;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Prototype;
-
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2010 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +18,16 @@ import org.luaj.vm2.Prototype;
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- ******************************************************************************/
+ *------------------------------------------------------------------------------*/
+package org.luaj.vm2.luajc;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Prototype;
+
 public class JavaLoader extends ClassLoader {
 
 	private final Map<String, byte[]> unloaded = new HashMap<>();
@@ -47,8 +47,8 @@ public class JavaLoader extends ClassLoader {
 
 	public LuaFunction load(String classname, LuaValue env) {
 		try {
-			Class c = loadClass(classname);
-			LuaFunction v = (LuaFunction) c.newInstance();
+			Class<?> c = loadClass(classname);
+			LuaFunction v = (LuaFunction) c.getDeclaredConstructor().newInstance();
 			v.initupvalue1(env);
 			return v;
 		} catch (Exception e) {
@@ -64,7 +64,7 @@ public class JavaLoader extends ClassLoader {
 	}
 
 	@Override
-	public Class findClass(String classname) throws ClassNotFoundException {
+	public Class<?> findClass(String classname) throws ClassNotFoundException {
 		byte[] bytes = unloaded.get(classname);
 		if (bytes != null)
 			return defineClass(classname, bytes, 0, bytes.length);

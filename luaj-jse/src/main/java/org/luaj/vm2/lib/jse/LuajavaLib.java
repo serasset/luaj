@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2009 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -160,7 +160,7 @@ public class LuajavaLib extends VarArgFunction {
 				// get constructor
 				String classname = args.checkjstring(1);
 				String methodname = args.checkjstring(2);
-				Class clazz = classForName(classname);
+				Class<?> clazz = classForName(classname);
 				Method method = clazz.getMethod(methodname);
 				Object result = method.invoke(clazz);
 				if (result instanceof LuaValue) {

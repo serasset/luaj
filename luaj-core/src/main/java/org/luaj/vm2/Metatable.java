@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2013 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,10 +28,10 @@ import org.luaj.vm2.LuaTable.Slot;
  */
 interface Metatable {
 
-	/** Return whether or not this table's keys are weak. */
+	/** Return whether this table's keys are weak. */
 	boolean useWeakKeys();
 
-	/** Return whether or not this table's values are weak. */
+	/** Return whether this table's values are weak. */
 	boolean useWeakValues();
 
 	/** Return this metatable as a LuaValue. */

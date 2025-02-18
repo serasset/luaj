@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2010-2012 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +40,7 @@ package org.luaj.vm2.parser;
 import org.luaj.vm2.*;
 import org.luaj.vm2.ast.*;
 import java.util.*;
+import java.nio.charset.Charset;
 
 public class LuaParser {
   static {
@@ -47,7 +48,7 @@ public class LuaParser {
   }
 
   public static void main(String args[]) throws ParseException {
-    LuaParser parser = new LuaParser(System.in);
+    LuaParser parser = new LuaParser(System.in, Charset.defaultCharset());
     parser.Chunk();
   }
   

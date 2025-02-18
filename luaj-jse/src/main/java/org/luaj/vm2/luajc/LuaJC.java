@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2010 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*---------------------------------------------------------------------------*/
 package org.luaj.vm2.luajc;
 
 import java.io.IOException;
@@ -72,36 +72,36 @@ public class LuaJC implements Globals.Loader {
 	 * Install the compiler as the main Globals.Loader to use in a set of
 	 * globals. Will fall back to the LuaC prototype compiler.
 	 */
-	public static final void install(Globals G) {
+	public static void install(Globals G) {
 		G.loader = instance;
 	}
 
 	protected LuaJC() {}
 
-	public Hashtable compileAll(InputStream script, String chunkname, String filename, Globals globals, boolean genmain)
+	public Hashtable<String, byte[]> compileAll(InputStream script, String chunkname, String filename, Globals globals, boolean genmain)
 		throws IOException {
 		final String classname = toStandardJavaClassName(chunkname);
 		final Prototype p = globals.loadPrototype(script, classname, "bt");
 		return compileProtoAndSubProtos(p, classname, filename, genmain);
 	}
 
-	public Hashtable compileAll(Reader script, String chunkname, String filename, Globals globals, boolean genmain)
+	public Hashtable<String, byte[]> compileAll(Reader script, String chunkname, String filename, Globals globals, boolean genmain)
 		throws IOException {
 		final String classname = toStandardJavaClassName(chunkname);
 		final Prototype p = globals.compilePrototype(script, classname);
 		return compileProtoAndSubProtos(p, classname, filename, genmain);
 	}
 
-	private Hashtable compileProtoAndSubProtos(Prototype p, String classname, String filename, boolean genmain)
+	private Hashtable<String, byte[]> compileProtoAndSubProtos(Prototype p, String classname, String filename, boolean genmain)
 		throws IOException {
 		final String luaname = toStandardLuaFileName(filename);
-		final Hashtable h = new Hashtable();
+		final Hashtable<String, byte[]> h = new Hashtable<>();
 		final JavaGen gen = new JavaGen(p, classname, luaname, genmain);
 		insert(h, gen);
 		return h;
 	}
 
-	private void insert(Hashtable h, JavaGen gen) {
+	private void insert(Hashtable<String, byte[]> h, JavaGen gen) {
 		h.put(gen.classname, gen.bytecode);
 		for (int i = 0, n = gen.inners != null? gen.inners.length: 0; i < n; i++)
 			insert(h, gen.inners[i]);
@@ -117,7 +117,7 @@ public class LuaJC implements Globals.Loader {
 
 	private static String toStandardJavaClassName(String luachunkname) {
 		String stub = toStub(luachunkname);
-		StringBuffer classname = new StringBuffer();
+		StringBuilder classname = new StringBuilder();
 		for (int i = 0, n = stub.length(); i < n; ++i) {
 			final char c = stub.charAt(i);
 			classname.append(

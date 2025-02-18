@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2009 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -119,7 +119,7 @@ abstract class PlatformTestCase extends ResourcesTestCase {
 			switch (this.platform) {
 			case LUAJIT:
 				if (nocompile) {
-					LuaValue c = (LuaValue) Class.forName(name).newInstance();
+					LuaValue c = (LuaValue) Class.forName(name).getDeclaredConstructor().newInstance();
 					return c;
 				} else {
 					LuaJC.install(globals);

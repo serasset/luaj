@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*--------------------------------------------------------------------------
 * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2;
 
 /**
@@ -472,7 +472,7 @@ abstract public class LuaValue extends Varargs {
 	 * @see #optuserdata(Class, Object)
 	 * @see #TUSERDATA
 	 */
-	public boolean isuserdata(Class c) { return false; }
+	public boolean isuserdata(Class<?> c) { return false; }
 
 	/**
 	 * Convert to boolean false if {@link #NIL} or {@link #FALSE}, true if
@@ -625,7 +625,7 @@ abstract public class LuaValue extends Varargs {
 	 * @see #isuserdata(Class)
 	 * @see #TUSERDATA
 	 */
-	public Object touserdata(Class c) { return null; }
+	public Object touserdata(Class<?> c) { return null; }
 
 	/**
 	 * Convert the value to a human readable string using {@link #tojstring()}
@@ -915,7 +915,7 @@ abstract public class LuaValue extends Varargs {
 	 * @see #optuserdata(Object)
 	 * @see #TUSERDATA
 	 */
-	public Object optuserdata(Class c, Object defval) { argerror(c.getName()); return null; }
+	public Object optuserdata(Class<?> c, Object defval) { argerror(c.getName()); return null; }
 
 	/**
 	 * Perform argument check that this is not nil or none.
@@ -1179,7 +1179,7 @@ abstract public class LuaValue extends Varargs {
 	 * @see #checkuserdata()
 	 * @see #TUSERDATA
 	 */
-	public Object checkuserdata(Class c) { argerror("userdata"); return null; }
+	public Object checkuserdata(Class<?> c) { argerror("userdata"); return null; }
 
 	/**
 	 * Check that this is not the value {@link #NIL}, or throw {@link LuaError}
@@ -2547,9 +2547,9 @@ abstract public class LuaValue extends Varargs {
 	 * @see #raweq(LuaValue)
 	 * @see #EQ
 	 */
-	public static final boolean eqmtcall(LuaValue lhs, LuaValue lhsmt, LuaValue rhs, LuaValue rhsmt) {
+	public static boolean eqmtcall(LuaValue lhs, LuaValue lhsmt, LuaValue rhs, LuaValue rhsmt) {
 		LuaValue h = lhsmt.rawget(EQ);
-		return h.isnil() || h != rhsmt.rawget(EQ)? false: h.call(lhs, rhs).toboolean();
+		return !h.isnil() && h == rhsmt.rawget(EQ) && h.call(lhs, rhs).toboolean();
 	}
 
 	/**
@@ -3997,7 +3997,7 @@ abstract public class LuaValue extends Varargs {
 		case 1:
 			return v[offset];
 		case 2:
-			return new Varargs.PairVarargs(v[offset+0], v[offset+1]);
+			return new Varargs.PairVarargs(v[offset], v[offset+1]);
 		default:
 			return new Varargs.ArrayPartVarargs(v, offset, length, NONE);
 		}
@@ -4022,10 +4022,10 @@ abstract public class LuaValue extends Varargs {
 		case 0:
 			return more;
 		case 1:
-			return more.narg() > 0? (Varargs) new Varargs.PairVarargs(v[offset], more): (Varargs) v[offset];
+			return more.narg() > 0? new PairVarargs(v[offset], more) : v[offset];
 		case 2:
-			return more.narg() > 0? (Varargs) new Varargs.ArrayPartVarargs(v, offset, length, more)
-				: (Varargs) new Varargs.PairVarargs(v[offset], v[offset+1]);
+			return more.narg() > 0? new ArrayPartVarargs(v, offset, length, more)
+				: new PairVarargs(v[offset], v[offset+1]);
 		default:
 			return new Varargs.ArrayPartVarargs(v, offset, length, more);
 		}

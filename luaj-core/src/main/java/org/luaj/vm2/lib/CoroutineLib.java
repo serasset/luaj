@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2007-2011 LuaJ. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -95,7 +95,7 @@ public class CoroutineLib extends TwoArgFunction {
 		coroutine.set("resume", new resume());
 		coroutine.set("running", new running());
 		coroutine.set("status", new status());
-		coroutine.set("yield", new yield());
+		coroutine.set("yield", new luaYield());
 		coroutine.set("wrap", new wrap());
 		env.set("coroutine", coroutine);
 		if (!env.get("package").isnil())
@@ -134,7 +134,7 @@ public class CoroutineLib extends TwoArgFunction {
 		}
 	}
 
-	final class yield extends VarArgFunction {
+	final class luaYield extends VarArgFunction {
 		@Override
 		public Varargs invoke(Varargs args) {
 			return globals.yield(args);

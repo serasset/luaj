@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*--------------------------------------------------------------------------
 * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2.lib.jse;
 
 import java.lang.reflect.Array;
@@ -81,7 +81,7 @@ public class CoerceLuaToJava {
 		return getCoercion(clazz).coerce(value);
 	}
 
-	static final Map COERCIONS = Collections.synchronizedMap(new HashMap());
+	static final Map<Class<?>, Coercion> COERCIONS = Collections.synchronizedMap(new HashMap<>());
 
 	static final class BoolCoercion implements Coercion {
 		@Override
@@ -255,10 +255,10 @@ public class CoerceLuaToJava {
 	}
 
 	static final class ArrayCoercion implements Coercion {
-		final Class    componentType;
+		final Class<?>    componentType;
 		final Coercion componentCoercion;
 
-		public ArrayCoercion(Class componentType) {
+		public ArrayCoercion(Class<?> componentType) {
 			this.componentType = componentType;
 			this.componentCoercion = getCoercion(componentType);
 		}
@@ -311,22 +311,22 @@ public class CoerceLuaToJava {
 	 * @return number of inheritance levels between subclass and baseclass, or
 	 *         SCORE_UNCOERCIBLE if not a subclass
 	 */
-	static final int inheritanceLevels(Class baseclass, Class subclass) {
+	static int inheritanceLevels(Class<?> baseclass, Class<?> subclass) {
 		if (subclass == null)
 			return SCORE_UNCOERCIBLE;
 		if (baseclass == subclass)
 			return 0;
 		int min = Math.min(SCORE_UNCOERCIBLE, inheritanceLevels(baseclass, subclass.getSuperclass())+1);
-		Class[] ifaces = subclass.getInterfaces();
-		for (Class element : ifaces)
+		Class<?>[] ifaces = subclass.getInterfaces();
+		for (Class<?> element : ifaces)
 			min = Math.min(min, inheritanceLevels(baseclass, element)+1);
 		return min;
 	}
 
 	static final class ObjectCoercion implements Coercion {
-		final Class targetType;
+		final Class<?> targetType;
 
-		ObjectCoercion(Class targetType) {
+		ObjectCoercion(Class<?> targetType) {
 			this.targetType = targetType;
 		}
 
@@ -405,13 +405,12 @@ public class CoerceLuaToJava {
 		COERCIONS.put(byte[].class, bytesCoercion);
 	}
 
-	static Coercion getCoercion(Class c) {
-		Coercion co = (Coercion) COERCIONS.get(c);
+	static Coercion getCoercion(Class<?> c) {
+		Coercion co = COERCIONS.get(c);
 		if (co != null) {
 			return co;
 		}
 		if (c.isArray()) {
-			Class typ = c.getComponentType();
 			co = new ArrayCoercion(c.getComponentType());
 		} else {
 			co = new ObjectCoercion(c);

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2015 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@ package org.luaj.vm2.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,8 +89,11 @@ public class LuajClassLoader extends ClassLoader {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
 	 */
-	public static Launcher NewLauncher() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static Launcher NewLauncher()
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
 		return NewLauncher(DefaultLauncher.class);
 	}
 
@@ -108,11 +112,13 @@ public class LuajClassLoader extends ClassLoader {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
 	 */
 	public static Launcher NewLauncher(Class<? extends Launcher> launcher_class)
-		throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
 		final LuajClassLoader loader = new LuajClassLoader();
-		final Object instance = loader.loadAsUserClass(launcher_class.getName()).newInstance();
+		final Object instance = loader.loadAsUserClass(launcher_class.getName()).getDeclaredConstructor().newInstance();
 		return (Launcher) instance;
 	}
 

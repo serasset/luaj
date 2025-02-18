@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2009 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -48,7 +48,7 @@ public class LexState extends Constants {
 	protected static final String[] RESERVED_LOCAL_VAR_KEYWORDS       = { RESERVED_LOCAL_VAR_FOR_CONTROL,
 			RESERVED_LOCAL_VAR_FOR_GENERATOR, RESERVED_LOCAL_VAR_FOR_INDEX, RESERVED_LOCAL_VAR_FOR_LIMIT,
 			RESERVED_LOCAL_VAR_FOR_STATE, RESERVED_LOCAL_VAR_FOR_STEP };
-	private static final Hashtable  RESERVED_LOCAL_VAR_KEYWORDS_TABLE = new Hashtable();
+	private static final Hashtable<String, Boolean>  RESERVED_LOCAL_VAR_KEYWORDS_TABLE = new Hashtable<>();
 	static {
 		for (String element : RESERVED_LOCAL_VAR_KEYWORDS)
 			RESERVED_LOCAL_VAR_KEYWORDS_TABLE.put(element, Boolean.TRUE);
@@ -59,9 +59,9 @@ public class LexState extends Constants {
 	private static final int UCHAR_MAX      = 255;                // TODO, convert to unicode CHAR_MAX?
 	private static final int LUAI_MAXCCALLS = 200;
 
-	private static final String LUA_QS(String s) { return "'" + s + "'"; }
+	private static String LUA_QS(String s) { return "'" + s + "'"; }
 
-	private static final String LUA_QL(Object o) { return LUA_QS(String.valueOf(o)); }
+	private static String LUA_QL(Object o) { return LUA_QS(String.valueOf(o)); }
 
 	private static final int     LUA_COMPAT_LSTR   = 1;   // 1 for compatibility, 2 for old behavior
 	private static final boolean LUA_COMPAT_VARARG = true;

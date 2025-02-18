@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2007-2012 LuaJ. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -165,7 +165,7 @@ public class LuaThread extends LuaValue {
 
 	public static class State implements Runnable {
 		private final Globals globals;
-		final WeakReference   lua_thread;
+		final WeakReference<LuaThread>   lua_thread;
 		public final LuaValue function;
 		Varargs               args   = LuaValue.NONE;
 		Varargs               result = LuaValue.NONE;
@@ -186,7 +186,7 @@ public class LuaThread extends LuaValue {
 
 		State(Globals globals, LuaThread lua_thread, LuaValue function) {
 			this.globals = globals;
-			this.lua_thread = new WeakReference(lua_thread);
+			this.lua_thread = new WeakReference<>(lua_thread);
 			this.function = function;
 		}
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*--------------------------------------------------------------------------
 * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2.compiler;
 
 import java.io.IOException;
@@ -128,7 +128,7 @@ public class LuaC extends Constants implements Globals.Compiler, Globals.Loader 
 
 	static class CompileState {
 		int                     nCcalls = 0;
-		private final Hashtable strings = new Hashtable();
+		private final Hashtable<LuaString, LuaString> strings = new Hashtable<>();
 
 		protected CompileState() {}
 
@@ -161,7 +161,7 @@ public class LuaC extends Constants implements Globals.Compiler, Globals.Loader 
 		}
 
 		public LuaString cachedLuaString(LuaString s) {
-			LuaString c = (LuaString) strings.get(s);
+			LuaString c = strings.get(s);
 			if (c != null)
 				return c;
 			strings.put(s, s);

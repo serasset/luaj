@@ -1,5 +1,4 @@
-
-/*******************************************************************************
+/*----------------------------------------------------------------------------
 * Copyright (c) 2009-2012 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,17 +62,17 @@ public class luajc {
 	private boolean       loadclasses = false;
 	private String        encoding    = null;
 	private String        pkgprefix   = null;
-	private final List    files       = new ArrayList();
+	private final List<InputFile>    files       = new ArrayList<>();
 	private final Globals globals;
 
 	public static void main(String[] args) throws IOException {
 		new luajc(args);
 	}
 
-	private luajc(String[] args) throws IOException {
+	private luajc(String[] args) {
 
 		// process args
-		List seeds = new ArrayList();
+		List<String> seeds = new ArrayList<>();
 
 		// get stateful args
 		for (int i = 0; i < args.length; i++) {
@@ -136,19 +135,19 @@ public class luajc {
 		}
 
 		// collect up files to process
-		for (Object seed : seeds)
+		for (String seed : seeds)
 			collectFiles(srcdir + "/" + seed);
 
 		// check for at least one file
-		if (files.size() <= 0) {
+		if (files.isEmpty()) {
 			System.err.println("no files found in " + seeds);
 			System.exit(-1);
 		}
 
 		// process input files
 		globals = JsePlatform.standardGlobals();
-		for (Object file : files)
-			processFile((InputFile) file);
+		for (InputFile file : files)
+			processFile(file);
 	}
 
 	private void collectFiles(String path) {
@@ -221,16 +220,16 @@ public class luajc {
 
 			// create the chunk
 			FileInputStream fis = new FileInputStream(inf.infile);
-			final Hashtable t = encoding != null
+			final Hashtable<String, byte[]> t = encoding != null
 				? LuaJC.instance.compileAll(new InputStreamReader(fis, encoding), inf.luachunkname, inf.srcfilename,
 					globals, genmain)
 				: LuaJC.instance.compileAll(fis, inf.luachunkname, inf.srcfilename, globals, genmain);
 			fis.close();
 
 			// write out the chunk
-			for (Enumeration e = t.keys(); e.hasMoreElements();) {
-				String key = (String) e.nextElement();
-				byte[] bytes = (byte[]) t.get(key);
+			for (Enumeration<String> e = t.keys(); e.hasMoreElements();) {
+				String key = e.nextElement();
+				byte[] bytes = t.get(key);
 				if (key.indexOf('/') >= 0) {
 					String d = (destdir != null? destdir + "/": "")+key.substring(0, key.lastIndexOf('/'));
 					new File(d).mkdirs();
@@ -246,11 +245,11 @@ public class luajc {
 			// try to load the files
 			if (loadclasses) {
 				ClassLoader loader = new LocalClassLoader(t);
-				for (Enumeration e = t.keys(); e.hasMoreElements();) {
-					String classname = (String) e.nextElement();
+				for (Enumeration<String> e = t.keys(); e.hasMoreElements();) {
+					String classname = e.nextElement();
 					try {
-						Class c = loader.loadClass(classname);
-						Object o = c.newInstance();
+						Class<?> c = loader.loadClass(classname);
+						Object o = c.getDeclaredConstructor().newInstance();
 						if (verbose)
 							System.out.println("    loaded " + classname + " as " + o);
 					} catch (Exception ex) {

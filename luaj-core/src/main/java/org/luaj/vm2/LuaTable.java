@@ -332,10 +332,12 @@ public class LuaTable extends LuaValue implements Metatable {
 		else if (pos > n)
 			return NONE;
 		LuaValue v = get(pos);
-		for (LuaValue r = v; !r.isnil();) {
+		LuaValue r;
+		while (pos < n) {
 			r = get(pos+1);
 			set(pos++, r);
 		}
+		set(n, NONE);
 		return v.isnil()? NONE: v;
 	}
 

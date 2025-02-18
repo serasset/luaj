@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*--------------------------------------------------------------------------
 * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2.lib;
 
 import org.luaj.vm2.LuaError;
@@ -184,10 +184,10 @@ abstract public class LibFunction extends LuaFunction {
 	 * @param firstopcode the first opcode to use
 	 * @see #bind(LuaValue, Class, String[])
 	 */
-	protected void bind(LuaValue env, Class factory, String[] names, int firstopcode) {
+	protected void bind(LuaValue env, Class<?> factory, String[] names, int firstopcode) {
 		try {
 			for (int i = 0, n = names.length; i < n; i++) {
-				LibFunction f = (LibFunction) factory.newInstance();
+				LibFunction f = (LibFunction) factory.getDeclaredConstructor().newInstance();
 				f.opcode = firstopcode+i;
 				f.name = names[i];
 				env.set(f.name, f);

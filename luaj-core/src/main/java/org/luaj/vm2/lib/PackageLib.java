@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2010-2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -247,7 +247,7 @@ public class PackageLib extends TwoArgFunction {
 
 			/* else must load it; iterate over available loaders */
 			LuaTable tbl = package_.get(_SEARCHERS).checktable();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			Varargs loader = null;
 			for (int i = 1; true; i++) {
 				LuaValue searcher = tbl.get(i);
@@ -330,7 +330,7 @@ public class PackageLib extends TwoArgFunction {
 			// check the path elements
 			int e = -1;
 			int n = path.length();
-			StringBuffer sb = null;
+			StringBuilder sb = null;
 			name = name.replace(sep.charAt(0), rep.charAt(0));
 			while ( e < n ) {
 
@@ -353,15 +353,15 @@ public class PackageLib extends TwoArgFunction {
 				if (is != null) {
 					try {
 						is.close();
-					} catch (java.io.IOException ioe) {
+					} catch (java.io.IOException ignored) {
 					}
 					return valueOf(filename);
 				}
 
 				// report error
 				if (sb == null)
-					sb = new StringBuffer();
-				sb.append("\n\t" + filename);
+					sb = new StringBuilder();
+				sb.append("\n\t").append(filename);
 			}
 			return varargsOf(NIL, valueOf(sb.toString()));
 		}
@@ -382,11 +382,11 @@ public class PackageLib extends TwoArgFunction {
 		public Varargs invoke(Varargs args) {
 			String name = args.checkjstring(1);
 			String classname = toClassname(name);
-			Class c = null;
+			Class<?> c = null;
 			LuaValue v = null;
 			try {
 				c = Class.forName(classname);
-				v = (LuaValue) c.newInstance();
+				v = (LuaValue) c.getDeclaredConstructor().newInstance();
 				if (v.isfunction())
 					((LuaFunction) v).initupvalue1(globals);
 				return varargsOf(v, globals);
@@ -399,7 +399,7 @@ public class PackageLib extends TwoArgFunction {
 	}
 
 	/** Convert lua filename to valid class name */
-	public static final String toClassname(String filename) {
+	public static String toClassname(String filename) {
 		int n = filename.length();
 		int j = n;
 		if (filename.endsWith(".lua"))
@@ -407,7 +407,7 @@ public class PackageLib extends TwoArgFunction {
 		for (int k = 0; k < j; k++) {
 			char c = filename.charAt(k);
 			if (!isClassnamePart(c) || c == '/' || c == '\\') {
-				StringBuffer sb = new StringBuffer(j);
+				StringBuilder sb = new StringBuilder(j);
 				for (int i = 0; i < j; i++) {
 					c = filename.charAt(i);
 					sb.append(isClassnamePart(c)? c: c == '/' || c == '\\'? '.': '_');
@@ -418,7 +418,7 @@ public class PackageLib extends TwoArgFunction {
 		return n == j? filename: filename.substring(0, j);
 	}
 
-	private static final boolean isClassnamePart(char c) {
+	private static boolean isClassnamePart(char c) {
 		if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9')
 			return true;
 		switch (c) {

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2009 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,7 +46,7 @@ public class FuncState extends Constants {
 	}
 
 	Prototype f;          /* current function header */
-	Hashtable h;          /* table to find (and reuse) elements in `k' */
+	Hashtable<LuaValue, Integer> h;          /* table to find (and reuse) elements in `k' */
 	FuncState prev;       /* enclosing function */
 	LexState  ls;         /* lexical state */
 	BlockCnt  bl;         /* chain of current blocks */
@@ -254,7 +254,7 @@ public class FuncState extends Constants {
 		if (hasmultret(cc.v.k)) {
 			this.setmultret(cc.v);
 			this.setlist(cc.t.u.info, cc.na, LUA_MULTRET);
-			cc.na--; /**
+			cc.na--; /*
 						 * do not count last expression (unknown number of
 						 * elements)
 						 */
@@ -461,9 +461,9 @@ public class FuncState extends Constants {
 
 	int addk(LuaValue v) {
 		if (this.h == null) {
-			this.h = new Hashtable();
+			this.h = new Hashtable<>();
 		} else if (this.h.containsKey(v)) {
-			return ((Integer) h.get(v)).intValue();
+			return h.get(v).intValue();
 		}
 		final int idx = this.nk;
 		this.h.put(v, Integer.valueOf(idx));

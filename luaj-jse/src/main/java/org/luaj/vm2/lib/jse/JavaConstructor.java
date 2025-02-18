@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*----------------------------------------------------------------------------
 * Copyright (c) 2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2.lib.jse;
 
 import java.lang.reflect.Constructor;
@@ -46,10 +46,10 @@ import org.luaj.vm2.lib.VarArgFunction;
  */
 class JavaConstructor extends JavaMember {
 
-	static final Map constructors = Collections.synchronizedMap(new HashMap());
+	static final Map<Constructor<?>, JavaConstructor> constructors = Collections.synchronizedMap(new HashMap<>());
 
-	static JavaConstructor forConstructor(Constructor c) {
-		JavaConstructor j = (JavaConstructor) constructors.get(c);
+	static JavaConstructor forConstructor(Constructor<?> c) {
+		JavaConstructor j = constructors.get(c);
 		if (j == null)
 			constructors.put(c, j = new JavaConstructor(c));
 		return j;
@@ -59,9 +59,9 @@ class JavaConstructor extends JavaMember {
 		return new Overload(array);
 	}
 
-	final Constructor constructor;
+	final Constructor<?> constructor;
 
-	private JavaConstructor(Constructor c) {
+	private JavaConstructor(Constructor<?> c) {
 		super(c.getParameterTypes(), c.getModifiers());
 		this.constructor = c;
 	}

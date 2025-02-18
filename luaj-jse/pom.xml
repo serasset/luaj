@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.luaj</groupId>
 		<artifactId>luaj-parent</artifactId>
-		<version>3.0.5-GS</version>
+		<version>3.0.6-GS-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>luaj-jse</artifactId>
@@ -44,7 +44,7 @@
 							<goal>javacc</goal>
 						</goals>
 						<configuration>
-							<jdkVersion>1.8</jdkVersion>
+							<jdkVersion>11</jdkVersion>
 							<javadocFriendlyComments>true</javadocFriendlyComments>
 							<packageName>org.luaj.vm2.parser</packageName>
 							<sourceDirectory>src/main/javacc</sourceDirectory>

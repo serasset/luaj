@@ -1,5 +1,5 @@
 
-/*******************************************************************************
+/*----------------------------------------------------------------------------
 * Copyright (c) 2009-2012 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.luaj.vm2.Globals;
@@ -70,7 +71,7 @@ public class lua {
 		boolean processing = true;
 		boolean nodebug = false;
 		boolean luajc = false;
-		Vector libs = null;
+		ArrayList<String> libs = null;
 		try {
 			// stateful argument processing
 			for (int i = 0; i < args.length; i++) {
@@ -93,8 +94,8 @@ public class lua {
 					case 'l':
 						if (++i >= args.length)
 							usageExit();
-						libs = libs != null? libs: new Vector();
-						libs.addElement(args[i]);
+						libs = libs != null? libs: new ArrayList<>();
+						libs.add(args[i]);
 						break;
 					case 'i':
 						interactive = true;
@@ -134,7 +135,7 @@ public class lua {
 			if (luajc)
 				LuaJC.install(globals);
 			for (int i = 0, n = libs != null? libs.size(): 0; i < n; i++)
-				loadLibrary((String) libs.elementAt(i));
+				loadLibrary(libs.get(i));
 
 			// input script processing
 			processing = true;
@@ -179,7 +180,7 @@ public class lua {
 		} catch (Exception e) {
 			try {
 				// load as java class
-				LuaValue v = (LuaValue) Class.forName(libname).newInstance();
+				LuaValue v = (LuaValue) Class.forName(libname).getDeclaredConstructor().newInstance();
 				v.call(slibname, globals);
 			} catch (Exception f) {
 				throw new IOException("loadLibrary(" + libname + ") failed: " + e + "," + f);

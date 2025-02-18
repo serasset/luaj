@@ -1,5 +1,5 @@
 
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2009 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy

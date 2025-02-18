@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*----------------------------------------------------------------------------
 * Copyright (c) 2011 Luaj.org. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +18,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-******************************************************************************/
+*----------------------------------------------------------------------------*/
 package org.luaj.vm2.lib.jse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,10 +45,10 @@ import org.luaj.vm2.Varargs;
  */
 class JavaMethod extends JavaMember {
 
-	static final Map methods = Collections.synchronizedMap(new HashMap());
+	static final Map<Method, JavaMethod> methods = Collections.synchronizedMap(new HashMap<>());
 
 	static JavaMethod forMethod(Method m) {
-		JavaMethod j = (JavaMethod) methods.get(m);
+		JavaMethod j = methods.get(m);
 		if (j == null)
 			methods.put(m, j = new JavaMethod(m));
 		return j;

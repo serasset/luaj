@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
 * Copyright (c) 2008-2013 LuaJ. All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -177,7 +177,7 @@ public class LuaScriptEngine extends AbstractScriptEngine implements ScriptEngin
 				f = new LuaClosure(f.checkclosure().p, g);
 			else {
 				try {
-					f = f.getClass().newInstance();
+					f = f.getClass().getDeclaredConstructor().newInstance();
 				} catch (Exception e) {
 					throw new ScriptException(e);
 				}

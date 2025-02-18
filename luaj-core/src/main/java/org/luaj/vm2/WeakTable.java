@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*------------------------------------------------------------------------------
  * Copyright (c) 2009-2011, 2013 Luaj.org. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -356,7 +356,7 @@ public class WeakTable implements Metatable {
 	 */
 	protected static LuaValue strengthen(Object ref) {
 		if (ref instanceof WeakReference) {
-			ref = ((WeakReference) ref).get();
+			ref = ((WeakReference<?>) ref).get();
 		}
 		if (ref instanceof WeakValue) {
 			return ((WeakValue) ref).strongvalue();
@@ -370,10 +370,10 @@ public class WeakTable implements Metatable {
 	 * @see WeakTable
 	 */
 	static class WeakValue extends LuaValue {
-		WeakReference ref;
+		WeakReference<LuaValue> ref;
 
 		protected WeakValue(LuaValue value) {
-			ref = new WeakReference(value);
+			ref = new WeakReference<>(value);
 		}
 
 		@Override
@@ -395,14 +395,13 @@ public class WeakTable implements Metatable {
 
 		@Override
 		public LuaValue strongvalue() {
-			Object o = ref.get();
-			return (LuaValue) o;
+      return ref.get();
 		}
 
 		@Override
 		public boolean raweq(LuaValue rhs) {
-			Object o = ref.get();
-			return o != null && rhs.raweq((LuaValue) o);
+			LuaValue o = ref.get();
+			return o != null && rhs.raweq(o);
 		}
 	}
 
@@ -412,24 +411,24 @@ public class WeakTable implements Metatable {
 	 * @see WeakTable
 	 */
 	static final class WeakUserdata extends WeakValue {
-		private final WeakReference ob;
+		private final WeakReference<Object> ob;
 		private final LuaValue      mt;
 
 		private WeakUserdata(LuaValue value) {
 			super(value);
-			ob = new WeakReference(value.touserdata());
+			ob = new WeakReference<>(value.touserdata());
 			mt = value.getmetatable();
 		}
 
 		@Override
 		public LuaValue strongvalue() {
-			Object u = ref.get();
+			LuaValue u = ref.get();
 			if (u != null)
-				return (LuaValue) u;
+				return u;
 			Object o = ob.get();
 			if (o != null) {
 				LuaValue ud = LuaValue.userdataOf(o, mt);
-				ref = new WeakReference(ud);
+				ref = new WeakReference<>(ud);
 				return ud;
 			} else {
 				return null;

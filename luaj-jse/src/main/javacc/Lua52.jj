@@ -25,11 +25,12 @@ options {
 
 PARSER_BEGIN(LuaParser)
 package org.luaj.vm2.parser.lua52;
+import java.nio.charset.Charset;
 
 public class LuaParser {
 
   public static void main(String args[]) throws ParseException {
-    LuaParser parser = new LuaParser(System.in);
+    LuaParser parser = new LuaParser(System.in, Charset.defaultCharset());
     parser.Chunk();
   }
 
