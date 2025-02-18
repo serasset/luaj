@@ -311,11 +311,11 @@ class TableTest {
 		}
 	}
 
-	private static final void compareLists(LuaTable t, Vector<LuaString> v) {
+	private static void compareLists(LuaTable t, Vector<LuaValue> v) {
 		int n = v.size();
 		assertEquals(v.size(), t.length());
 		for (int j = 0; j < n; j++) {
-			LuaString vj = v.elementAt(j);
+			LuaValue vj = v.elementAt(j);
 			String tj = t.get(j+1).tojstring();
 			assertEquals(vj.tojstring(), tj);
 		}
@@ -324,7 +324,7 @@ class TableTest {
 	@Test
 	void testInsertBeginningOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 
 		for (int i = 1; i <= 32; ++i) {
 			LuaString test = LuaValue.valueOf("Test Value! " + i);
@@ -337,7 +337,7 @@ class TableTest {
 	@Test
 	void testInsertEndOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 
 		for (int i = 1; i <= 32; ++i) {
 			LuaString test = LuaValue.valueOf("Test Value! " + i);
@@ -350,7 +350,7 @@ class TableTest {
 	@Test
 	void testInsertMiddleOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 
 		for (int i = 1; i <= 32; ++i) {
 			LuaString test = LuaValue.valueOf("Test Value! " + i);
@@ -361,7 +361,7 @@ class TableTest {
 		}
 	}
 
-	private static final void prefillLists(LuaTable t, Vector<LuaString> v) {
+	private static void prefillLists(LuaTable t, Vector<LuaValue> v) {
 		for (int i = 1; i <= 32; ++i) {
 			LuaString test = LuaValue.valueOf("Test Value! " + i);
 			t.insert(0, test);
@@ -372,7 +372,7 @@ class TableTest {
 	@Test
 	void testRemoveBeginningOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 		prefillLists(t, v);
 		for (int i = 1; i <= 32; ++i) {
 			t.remove(1);
@@ -384,7 +384,7 @@ class TableTest {
 	@Test
 	void testRemoveEndOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 		prefillLists(t, v);
 		for (int i = 1; i <= 32; ++i) {
 			t.remove(0);
@@ -396,7 +396,7 @@ class TableTest {
 	@Test
 	void testRemoveMiddleOfList() {
 		LuaTable t = new_Table();
-		Vector<LuaString> v = new Vector<>();
+		Vector<LuaValue> v = new Vector<>();
 		prefillLists(t, v);
 		for (int i = 1; i <= 32; ++i) {
 			int m = v.size()/2;
@@ -404,6 +404,26 @@ class TableTest {
 			v.removeElementAt(m);
 			compareLists(t, v);
 		}
+	}
+
+	@Test
+	void testRemoveInNonSequencialList() {
+		LuaTable t = new_Table();
+		Vector<LuaValue> v = new Vector<>();
+		prefillLists(t, v);
+		// Make the list non sequencial
+		t.set(1, LuaValue.NIL);
+		t.set(11, LuaValue.NIL);
+		v.set(0, LuaValue.NIL);
+		v.set(10, LuaValue.NIL);
+
+		t.remove(11);
+		v.removeElementAt(10);
+		compareLists(t, v);
+		t.remove(1);
+		v.removeElementAt(0);
+		compareLists(t, v);
+
 	}
 
 	@Test

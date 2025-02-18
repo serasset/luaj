@@ -5,7 +5,7 @@
 
   <groupId>org.luaj</groupId>
   <artifactId>luaj-parent</artifactId>
-  <version>3.0.6-GS-SNAPSHOT</version>
+  <version>3.0.6-GS</version>
 
   <packaging>pom</packaging>
 
@@ -163,7 +163,7 @@
         <repository>
           <id>getalp.repository</id>
           <name>Getalp Projects and third party repository</name>
-          <url>scpexe://getalp.imag.fr/opt/www/m2</url>
+          <url>scpexe://getalp.imag.fr/opt/getalp/m2</url>
         </repository>
         <site>
           <id>kaiko.getalp.org</id>
@@ -200,11 +200,6 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
               <version>3.13.0</version>
-              <configuration>
-                <compilerArgs>
-                  <arg>-Xlint:unchecked</arg>
-                </compilerArgs>
-              </configuration>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
